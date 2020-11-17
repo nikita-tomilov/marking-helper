@@ -12,7 +12,9 @@
         Text: "{{ text }}"<br><br>
         <b>Request: {{ request }}</b><br><br>
         <b>Mark: "{{ mark }}"</b><br>
-        <a href="{{ set_mark_neg }}">Set -1</a> <a href="{{ set_mark_zero }}">Set 0</a>  <a href="{{ set_mark_pos }}">Set 1</a>
+        <button href="{{ set_mark_neg }}">-1 -- Страница не открывается или запрос некорректен</button>
+        <button href="{{ set_mark_zero }}">0 -- Ответ на запрос НЕ ревелантен</button>
+        <button href="{{ set_mark_pos }}">1 -- Ответ на запрос релевантен</button>
         <br><br>
         Url: <a href="{{ url }}">{{ url }}</a><br><br>
         <br><br>
