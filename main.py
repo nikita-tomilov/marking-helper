@@ -22,14 +22,14 @@ def get_file(extension, path_to_dir):
 
 
 def read_line_from_path(path):
-    file = open(path)
+    file = open(path, 'r', encoding='utf8')
     line = file.read().replace("\n", " ")
     file.close()
     return line
 
 
 def write_line_to_path(path, line):
-    file = open(path, "w")
+    file = open(path, "w", encoding='utf-8')
     file.write(line + "\n")
     file.close()
 
