@@ -81,7 +81,15 @@ def markentry(entry, txtfile, marking):
     if not (marking.startswith("<")):
         print(entry, txtfile, marking)
         write_mark_to_file(file_dir + entry + "/" + txtfile, marking)
-    return redirect("/" + entry, code=302)
+
+    idx = entries_to_map.index(entry)
+    count = len(entries_to_map)
+    next_entry_idx = idx + 1
+    if next_entry_idx >= len(entries_to_map):
+        next_entry_idx = 0
+    next_entry = entries_to_map[next_entry_idx]
+
+    return redirect("/" + str(next_entry), code=302)
 
 
 @app.route('/<entry>')
