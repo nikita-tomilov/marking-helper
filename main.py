@@ -5,7 +5,14 @@ from flask import render_template, send_from_directory
 
 app = Flask(__name__, template_folder="./template/")
 
-file_dir = "/home/hotaro/bessmertny_razmetka_7/"
+if 'DATASET_FOLDER' not in os.environ:
+    print('Set DATASET_FOLDER environment variable')
+    exit(1)
+
+file_dir = os.environ['DATASET_FOLDER']
+if not file_dir.endswith('/'):
+    file_dir += '/'
+
 entries_to_map = sorted([x[0].split("/")[-1] for x in os.walk(file_dir)])[1:]
 
 
@@ -74,7 +81,15 @@ def markentry(entry, txtfile, marking):
     if not (marking.startswith("<")):
         print(entry, txtfile, marking)
         write_mark_to_file(file_dir + entry + "/" + txtfile, marking)
-    return redirect("/" + entry, code=302)
+
+    idx = entries_to_map.index(entry)
+    count = len(entries_to_map)
+    next_entry_idx = idx + 1
+    if next_entry_idx >= len(entries_to_map):
+        next_entry_idx = 0
+    next_entry = entries_to_map[next_entry_idx]
+
+    return redirect("/" + str(next_entry), code=302)
 
 
 @app.route('/<entry>')
@@ -102,7 +117,7 @@ def fentry(entry):
     try:
         img_filename = "/file/" + entry + "/" + get_file("jpg", entry_root_dir).split("/")[-1]
     except Exception:
-        img_filename = "<none>"
+        img_filename = None
 
     text_request = ""
     url = "<not found>"
