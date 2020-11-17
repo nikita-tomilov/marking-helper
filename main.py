@@ -5,7 +5,14 @@ from flask import render_template, send_from_directory
 
 app = Flask(__name__, template_folder="./template/")
 
-file_dir = "/home/hotaro/bessmertny_razmetka_7/"
+if 'DATASET_FOLDER' not in os.environ:
+    print('Set DATASET_FOLDER environment variable')
+    exit(1)
+
+file_dir = os.environ['DATASET_FOLDER']
+if not file_dir.endswith('/'):
+    file_dir += '/'
+
 entries_to_map = sorted([x[0].split("/")[-1] for x in os.walk(file_dir)])[1:]
 
 
