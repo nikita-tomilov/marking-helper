@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect
 from flask import render_template, send_from_directory
 
 app = Flask(__name__, template_folder="./template/")
@@ -21,9 +21,46 @@ def read_line_from_path(path):
     return line
 
 
+def write_line_to_path(path, line):
+    file = open(path, "w")
+    file.write(line + "\n")
+    file.close()
+
+
+def write_mark_to_file(path, mark):
+    line = read_line_from_path(path)
+    split = line.split("\t")
+    join = "\t".join(split[:-1])
+    join = join + "\t" + mark
+    print(join)
+    write_line_to_path(path, join)
+
+
+def check_if_done(entry):
+    entry_root_dir = file_dir + entry
+    try:
+        text_filename = get_file("txt", entry_root_dir)
+        text = read_line_from_path(text_filename).split("\t")[-1]
+    except Exception:
+        return ""
+    text = text.strip()
+    if len(text) == 0:
+        return ""
+    return "Marked as '" + text + "'"
+
+
 @app.route('/')
 def list():
-    return render_template('list.html', count=len(entries_to_map), entries=entries_to_map)
+    entries_with_marks = []
+    done_count = 0
+    for entry in entries_to_map:
+        is_done = check_if_done(entry)
+        entry_data = {"name": entry, "is_done": is_done}
+        if len(is_done) > 0:
+            done_count += 1
+        entries_with_marks.append(entry_data)
+
+    return render_template('list.html', count=len(entries_with_marks), entries=entries_with_marks, done_count=done_count)
 
 
 @app.route('/file/<entry>/<file>')
@@ -32,8 +69,18 @@ def entry(entry, file):
     return send_from_directory(file_dir + entry, file) # lol vulnerability
 
 
+@app.route('/mark/<entry>/<txtfile>/<marking>')
+def markentry(entry, txtfile, marking):
+    if not (marking.startswith("<")):
+        print(entry, txtfile, marking)
+        write_mark_to_file(file_dir + entry + "/" + txtfile, marking)
+    return redirect("/" + entry, code=302)
+
+
 @app.route('/<entry>')
 def fentry(entry):
+    if entry.startswith("<"):
+        return "wtf"
     entry_name = entry
     idx = entries_to_map.index(entry)
     count = len(entries_to_map)
@@ -58,14 +105,22 @@ def fentry(entry):
         img_filename = "<none>"
 
     text_request = ""
+    url = "<not found>"
     split = text.split("\t")
     i = 1
     while i < len(split):
         split_entry = split[i]
         if split_entry.startswith("http"):
+            url = split_entry
             break
         text_request += " " + split_entry
         i += 1
+    mark = split[-1]
+    if not mark:
+        mark = "<not set yet>"
+    set_mark_neg = "/mark/" + entry + "/" + text_filename.split("/")[-1] + "/-1"
+    set_mark_zero = "/mark/" + entry + "/" + text_filename.split("/")[-1] + "/0"
+    set_mark_pos = "/mark/" + entry + "/" + text_filename.split("/")[-1] + "/1"
     return render_template('entry.html',
                            entry_name=entry_name,
                            idx=idx + 1,
@@ -75,7 +130,12 @@ def fentry(entry):
                            text_filename=text_filename,
                            text=text,
                            img_filename=img_filename,
-                           request=text_request)
+                           request=text_request,
+                           url=url,
+                           mark=mark,
+                           set_mark_neg=set_mark_neg,
+                           set_mark_zero=set_mark_zero,
+                           set_mark_pos=set_mark_pos)
 
 
 if __name__ == '__main__':

@@ -1,9 +1,10 @@
 <html>
 <body>
-There are {{ count }} entries:
+There are {{ count }} entries <br>
+Done: {{ done_count }}
 <ul>
 {% for entry in entries %}
-  <li><a href="/{{ entry }}">{{ entry }}</a></li>
+  <li><a href="/{{ entry.name }}">{{ entry.name }}</a> {{ entry.is_done }}</li>
 {% endfor %}
 </ul>
 </body>
