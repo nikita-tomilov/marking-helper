@@ -1,23 +1,29 @@
 <html>
-<body>
-Selected entry {{ entry_name }}<br>
-{{ idx }} out of {{ count }} <br>
-<br>
-<a href="/">Back to list</a><br>
-<a href="/{{ next_entry }}">Next: {{ next_entry }}</a><br>
-<a href="/{{ prev_entry }}">Prev: {{ prev_entry }}</a><br>
-<br>
-<br>
-Text filename: "{{ text_filename }}"<br><br>
-Text: "{{ text }}"<br><br>
-<b>Request: {{ request }}</b><br><br>
-<b>Mark: "{{ mark }}"</b><br>
-<a href="{{ set_mark_neg }}">Set -1</a> <a href="{{ set_mark_zero }}">Set 0</a>  <a href="{{ set_mark_pos }}">Set 1</a>
-<br><br>
-Url: <a href="{{ url }}">{{ url }}</a><br><br>
-<br><br>
-Image filename: "{{ img_filename }}"<br><br>
-Image: <img src="{{ img_filename }}">
-
-</body>
+    <body>
+        Selected entry {{ entry_name }}<br>
+        {{ idx }} out of {{ count }} <br>
+        <br>
+        <a href="/">Back to list</a><br>
+        <a href="/{{ next_entry }}">Next: {{ next_entry }}</a><br>
+        <a href="/{{ prev_entry }}">Prev: {{ prev_entry }}</a><br>
+        <br>
+        <br>
+        Text filename: "{{ text_filename }}"<br><br>
+        Text: "{{ text }}"<br><br>
+        <b>Request: {{ request }}</b><br><br>
+        <b>Mark: "{{ mark }}"</b><br>
+        <a href="{{ set_mark_neg }}">Set -1</a> <a href="{{ set_mark_zero }}">Set 0</a>  <a href="{{ set_mark_pos }}">Set 1</a>
+        <br><br>
+        Url: <a href="{{ url }}">{{ url }}</a><br><br>
+        <br><br>
+        {% if img_filename %}
+            Image filename: "{{ img_filename }}"<br><br>
+            Image: <img src="{{ img_filename }}">
+        {% else %}
+            No image found. Here is iframe with url:<br>
+            <iframe src="{{ url }}" style="width: 100%; height: 75%">
+                Some troubles with iframe
+            </iframe>
+        {% endif %}
+    </body>
 </html>

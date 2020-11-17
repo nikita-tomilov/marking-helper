@@ -109,7 +109,7 @@ def fentry(entry):
     try:
         img_filename = "/file/" + entry + "/" + get_file("jpg", entry_root_dir).split("/")[-1]
     except Exception:
-        img_filename = "<none>"
+        img_filename = None
 
     text_request = ""
     url = "<not found>"
